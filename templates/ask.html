@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Posez votre question</title>
     <style>
       body {
         margin: 0;
@@ -95,31 +94,65 @@
       }
     </style>
 </head>
-<body>
-  <!-- Texte DeVinci en arrière-plan -->
-  <div class="background-text">De Vinci</div>
+<div class="container">
+  <!-- Boîte de chat -->
+  <div class="chat-box" id="chatBox" style="max-height:300px; overflow-y:auto; margin-bottom:1rem;"></div>
 
-  <div class="container">
-    <form id="questionForm" action="{{ url_for('answer') }}" method="post">
-      <div class="input-group">
-        <textarea id="question" name="question" rows="3" placeholder="Écrivez votre question ici..." required></textarea>
-        <button type="submit">↵</button>
-      </div>
-    </form>
-  </div>
+  <form id="questionForm">
+    <div class="input-group">
+      <textarea id="question" name="question" rows="3" placeholder="Écrivez votre question ici..." required></textarea>
+      <button type="submit">↵</button>
+    </div>
+  </form>
+</div>
 
-  <script>
-    const textarea = document.getElementById('question');
-    const form = document.getElementById('questionForm');
+<script>
+const form = document.getElementById('questionForm');
+const textarea = document.getElementById('question');
+const chatBox = document.getElementById('chatBox');
 
-    textarea.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        if (!event.shiftKey) {
-          event.preventDefault();
-          form.submit();
-        }
-      }
-    });
-  </script>
-</body>
-</html>
+function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+    div.style.margin = '0.5rem 0';
+    div.style.padding = '0.5rem 1rem';
+    div.style.borderRadius = '12px';
+    div.style.maxWidth = '80%';
+    div.style.wordWrap = 'break-word';
+    div.style.alignSelf = sender === 'user' ? 'flex-end' : 'flex-start';
+    div.style.backgroundColor = sender === 'user' ? '#f9d423' : '#333';
+    div.style.color = sender === 'user' ? '#000' : '#fff';
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+form.addEventListener('submit', async function(event){
+    event.preventDefault();
+    const question = textarea.value.trim();
+    if (!question) return;
+
+    addMessage(question, 'user');
+    textarea.value = '';
+
+    try {
+        const response = await fetch('/answer', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question})
+        });
+        const data = await response.json();
+        if (data.answer) addMessage(data.answer, 'bot');
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+// Envoi avec Enter sauf si Shift
+textarea.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        form.dispatchEvent(new Event('submit'));
+    }
+});
+</script>

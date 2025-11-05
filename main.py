@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
-history = []  # liste de dicts { "question": ..., "answer": ... }
+history = []  # Liste des messages { "question": ..., "answer": ... }
+
+def generate_answer(question):
+    # Ici tu peux mettre ton code de génération de réponse
+    return f"Réponse auto-générée pour : «{question}»"
 
 @app.route('/', methods=['GET'])
 def ask():
@@ -10,11 +14,13 @@ def ask():
 
 @app.route('/answer', methods=['POST'])
 def answer():
-    question = request.form.get("question", "").strip()
+    data = request.get_json()
+    question = data.get("question", "").strip()
     if question:
-        answer_text = f"Vous avez demandé : «{question}». Voici une réponse auto-générée."
+        answer_text = generate_answer(question)
         history.append({ "question": question, "answer": answer_text })
-    return render_template('answer.html', history=history)
+        return jsonify({"question": question, "answer": answer_text, "history": history})
+    return jsonify({"error": "Aucune question reçue"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
