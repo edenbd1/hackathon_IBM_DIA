@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Posez votre question</title>
+</head>
+<body>
+    <h1>Posez votre question</h1>
+    <form action="{{ url_for('answer') }}" method="post">
+        <label for="question">Votre question :</label><br>
+        <textarea id="question" name="question" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Envoyer</button>
+    </form>
+
+    {% if answer %}
+    <h2>Réponse :</h2>
+    <p>{{ answer }}</p>
+    {% endif %}
+</body>
+</html>

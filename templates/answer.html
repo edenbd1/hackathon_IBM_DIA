@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réponse</title>
+</head>
+<body>
+    <h1>Votre question</h1>
+    <p><strong>Question :</strong> {{ question }}</p>
+
+    <h2>Réponse</h2>
+    <p>{{ answer }}</p>
+
+    <br>
+    <a href="{{ url_for('ask') }}">Poser une nouvelle question</a>
+</body>
+</html>
