@@ -1,60 +1,60 @@
-# Welcome to the IBM Hackathon! 🎉
-
-This repository serves as a template to help you get started quickly.  
-Follow the project structure, fork the repo, and clone it locally to begin.
-
----
-
-## 1. Fork the Repository
-
-1. Click **Fork** (top right) to create a copy under your own account
-2. Make sure the fork is **public**  
-   If it isn't, go to:  
-   **Settings → Change repository visibility → Public**
+# **Track Sustainability**
+### *Estimation and Simulation of the CO₂ Impact of LLM (Large Language Model) Queries*
+**Hackathon IBM x ESILV**
 
 ---
 
-## 2. Clone the Repository
+## 🎯 Project Objective
 
-Once you have forked the repository:
+As the use of generative AI continues to grow, its environmental impact has become a key concern.  
+**Track Sustainability** provides a solution to **measure and visualize the carbon footprint of a query executed on a Large Language Model (LLM)**.
 
-```bash
-# Clone your fork (replace <your-user> and <repo> with your info)
-git clone https://github.com/<your-user>/<repo>.git
-
-# Move into the project folder
-cd <repo>
-```
+The goal is to **raise awareness** among users about the energy consumption and CO₂ emissions associated with AI usage, while offering **clear and relatable comparisons** (e.g., equivalent kilometers by car, duration of lighting a bulb, etc.).
 
 ---
 
-## 3. Contribute
+## 🧠 Project Overview
 
-### Create a new branch for each feature or fix:
+We are developing an **interactive web application** that looks just like a standard LLM chat interface.
 
-```bash
-git checkout -b feature/my-awesome-feature
-```
+When a user submits a request:
 
-### Commit your changes:
+1. The request is processed by a pre-trained model capable of **estimating the energy cost** of handling the query.
+2. This estimated cost is **converted into CO₂ emissions**.
+3. The app **displays a visual comparison** to help the user understand the impact of their query.
 
-```bash
-git add .
-git commit -m "Add: my awesome feature"
-git push origin feature/my-awesome-feature
-```
+The project leverages the **WatsonX** platform for model interaction, computation, and performance evaluation.
 
 ---
 
-## 4. Quick Rules
+## 🛠️ Technologies Used
 
-✅ Keep your fork **public** during the hackathon  
-✅ Follow the **template's structure**  
-❓ For any questions: contact **kryptosphere@devinci.fr**
+| Technology / Tool | Purpose |
+|-------------------|---------|
+| **WatsonX** | Runtime environment and model analysis |
+| **Machine Learning / Deep Learning** | Estimation of computational and environmental cost |
+| **Web Application (Frontend + Backend)** | User interface and application logic |
+| **Data Visualization Tools** | Clear and intuitive representation of CO₂ impact |
 
 ---
 
-## 5. Have Fun and Good Luck!
+## 👥 Team Members
 
-Good luck during the IBM Hackathon — build, learn, and most importantly: **have fun!** 🚀
+Project developed as part of the **IBM x ESILV Hackathon** by:
+
+- **Paul Ranc**
+- **Héloïse Roméo**
+- **Natalia Gerard**
+- **Alexis Denneulin**
+- **Valentin Rech**
+- **Valentin Templé**
+
+---
+
+## 🚀 Vision
+
+Our ambition is to create a **reference tool for environmental awareness in AI usage**.  
+**Understanding the impact is the first step toward responsible innovation.**
+
+---
 
