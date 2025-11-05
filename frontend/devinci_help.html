@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Help Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --kt-primary: #009ef7;
+            --kt-gray-100: #f9f9f9;
+            --kt-gray-200: #f1f1f2;
+            --kt-gray-300: #dbdfe9;
+            --kt-gray-400: #b5b5c3;
+            --kt-gray-500: #a1a5b7;
+            --kt-gray-600: #7e8299;
+            --kt-gray-700: #5e6278;
+            --kt-gray-800: #3f4254;
+            --kt-gray-900: #181c32;
+            --kt-dark: #1e1e2d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--kt-gray-100);
+            color: var(--kt-gray-800);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-300);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .flex-grow-1 {
+            flex-grow: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-container img {
+            height: 35px;
+        }
+
+        .logo-container h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--kt-gray-800);
+            margin: 0;
+        }
+
+        .app-navbar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.475rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.925rem;
+            transition: all 0.2s;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-light {
+            background: var(--kt-gray-100);
+            color: var(--kt-gray-700);
+        }
+
+        .btn-light:hover {
+            background: var(--kt-gray-200);
+        }
+
+        .btn-primary {
+            background: var(--kt-primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #0095e8;
+        }
+
+        .symbol {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.475rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lang-flag {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+        }
+
+        /* Main Content */
+        .app-main {
+            padding: 2rem 0;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.75rem;
+        }
+
+        .col-12 {
+            width: 100%;
+            padding: 0 0.75rem;
+        }
+
+        .col-md-4 {
+            width: 33.333%;
+            padding: 0 0.75rem;
+        }
+
+        .col-md-6 {
+            width: 50%;
+            padding: 0 0.75rem;
+        }
+
+        .col-md-8 {
+            width: 66.666%;
+            padding: 0 0.75rem;
+        }
+
+        /* Search Card */
+        .search__card {
+            background: linear-gradient(135deg, #1e1e2d 0%, #2d2d44 100%);
+            border-radius: 0.625rem;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .search__card .card-body {
+            padding: 3rem;
+        }
+
+        .search__card h2 {
+            color: #fff;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .search__card h3 {
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search__card a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .position-relative {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 0.475rem;
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--kt-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--kt-primary);
+            font-size: 1.25rem;
+        }
+
+        /* Topics Navigation */
+        .topics__nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-link-topics {
+            padding: 0.75rem 1rem;
+            color: var(--kt-gray-700);
+            text-decoration: none;
+            border-radius: 0.475rem;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-link-topics:hover {
+            background: var(--kt-gray-200);
+            color: var(--kt-gray-900);
+        }
+
+        /* Card */
+        .card {
+            background: #fff;
+            border-radius: 0.625rem;
+            border: 1px solid var(--kt-gray-300);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .card h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--kt-gray-900);
+            margin-bottom: 1.5rem;
+        }
+
+        /* List Group */
+        .list-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-group-item {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--kt-gray-800);
+            transition: background 0.2s;
+        }
+
+        .list-group-item:hover {
+            background: var(--kt-gray-100);
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-group-item i {
+            font-size: 1.5rem;
+            color: var(--kt-gray-700);
+        }
+
+        /* Accordion */
+        .accordion__title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--kt-gray-800);
+            cursor: pointer;
+        }
+
+        .accordion__chevron {
+            color: var(--kt-gray-600);
+            transition: transform 0.3s;
+        }
+
+        .accordion__content {
+            padding: 1rem 0;
+            color: var(--kt-gray-700);
+            line-height: 1.6;
+        }
+
+        .accordion__content ul {
+            margin-left: 1.5rem;
+        }
+
+        .accordion__content li {
+            margin: 0.5rem 0;
+        }
+
+        .accordion__metadatas {
+            font-size: 0.85rem;
+            color: var(--kt-gray-600);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .bg-emlv {
+            background: #0066cc;
+            color: #fff;
+        }
+
+        .bg-esilv {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .bg-iim {
+            background: #9b59b6;
+            color: #fff;
+        }
+
+        .bg-executive {
+            background: #34495e;
+            color: #fff;
+        }
+
+        .accordion__metadatas-share,
+        .accordion__metadatas-hashtag {
+            background: none;
+            border: none;
+            color: var(--kt-gray-600);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .accordion__metadatas-share:hover,
+        .accordion__metadatas-hashtag:hover {
+            color: var(--kt-primary);
+        }
+
+        .collapsible {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            padding: 1rem 0;
+        }
+
+        .collapse {
+            display: none;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--kt-gray-200);
+            margin: 1rem 0;
+        }
+
+        /* Utilities */
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mt-6 { margin-top: 2rem; }
+        .mt-12 { margin-top: 3rem; }
+        .mt-16 { margin-top: 4rem; }
+        .mb-6 { margin-bottom: 2rem; }
+        .mb-9 { margin-bottom: 2.5rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .ms-2 { margin-left: 0.5rem; }
+        .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
+        .text-center { text-align: center; }
+        .fw-bold { font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .col-md-4,
+            .col-md-6,
+            .col-md-8 {
+                width: 100%;
+            }
+
+            .app-container {
+                padding: 0 1rem;
+            }
+
+            .container-fluid {
+                padding: 0 1rem;
+            }
+
+            .search__card .card-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .logo-container h2 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="app-header">
+        <div class="app-container">
+            <div class="logo-container">
+                <a href="#">
+                    <svg width="158" height="40" viewBox="0 0 158 40" fill="none">
+                        <path d="M10 5L25 35L15 35L5 15L10 5Z" fill="#1e1e2d"/>
+                        <circle cx="30" cy="12" r="5" fill="#1e1e2d"/>
+                        <text x="45" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1e1e2d">DE VINCI</text>
+                    </svg>
+                </a>
+                <h2>Help Center</h2>
+            </div>
+
+            <div class="app-navbar">
+                <button class="btn btn-icon btn-light">
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+                
+                <button class="btn btn-light symbol">
+                    <svg width="20" height="15" viewBox="0 0 20 15">
+                        <rect width="20" height="5" fill="#0055A4"/>
+                        <rect y="5" width="20" height="5" fill="#fff"/>
+                        <rect y="10" width="20" height="5" fill="#EF4135"/>
+                    </svg>
+                </button>
+
+                <button class="btn btn-light">
+                    <span class="fw-bold">Guillaume REDON</span>
+                    <i class="fa-solid fa-graduation-cap ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="app-main">
+        <div class="container-fluid">
+            <div class="row mt-16 mb-12">
+                <!-- Search Card -->
+                <div class="col-md-8">
+                    <div class="card search__card">
+                        <div class="card-body">
+                            <h2>Rechercher votre réponse</h2>
+                            <div class="position-relative">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" class="form-control" placeholder="Rechercher un article, une question...">
+                            </div>
+                            <div class="mt-12">
+                                <h3>Je ne trouve pas ma réponse</h3>
+                                <a href="#">Ouvrir une demande d'aide</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topics Sidebar -->
+                <div class="col-md-4">
+                    <h2>Thématiques</h2>
+                    <nav class="topics__nav mt-3">
+                        <a href="#" class="nav-link-topics">RH et DAF</a>
+                        <a href="#" class="nav-link-topics">Outils numériques</a>
+                        <a href="#" class="nav-link-topics">Scolarité</a>
+                        <a href="#" class="nav-link-topics">Vie étudiante</a>
+                        <a href="#" class="nav-link-topics">De Vinci Learning</a>
+                        <a href="#" class="nav-link-topics">International</a>
+                        <a href="#" class="nav-link-topics">Stages</a>
+                        <a href="#" class="nav-link-topics">Alternance</a>
+                        <a href="#" class="nav-link-topics">Langues</a>
+                        <a href="#" class="nav-link-topics">App Mobile</a>
+                        <a href="#" class="nav-link-topics">Soft Skills</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Requests Section -->
+            <div class="row">
+                <div class="col-12 mb-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center" style="justify-content: space-between;">
+                                <h2 class="mb-6">Demandes d'aide en cours</h2>
+                                <a href="#" class="btn btn-primary">Ouvrir une demande d'aide</a>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <span>Aucune demande d'aide en cours</span>
+                            </div>
+                            <div class="mt-4">
+                                <a href="#" style="color: var(--kt-primary); text-decoration: none;">Voir toutes les demandes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pinned Questions -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Questions épinglées</h2>
+                            <div class="list-group">
+                                <div class="py-0">
+                                    <div class="collapsible" onclick="toggleAccordion('acc1')">
+                                        <div style="flex: 1;">
+                                            <div class="accordion__title">Comment se rendre aux différents campus ?</div>
+                                        </div>
+                                        <div class="accordion__chevron">
+                                            <i class="fa-solid fa-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                    <div id="acc1" class="collapse">
+                                        <div class="accordion__content">
+                                            <ul>
+                                                <li><strong>PARIS</strong>
+                                                    <ul>
+                                                        <li>Campus du Pôle Léonard de Vinci : 12 Avenue Léonard de Vinci, 92400 Courbevoie</li>
+                                                        <li>Campus de l'Arche : 47 boulevard de Pesaro, 92000 Nanterre</li>
+                                                        <li>Campus des Terrasses : 32 rue des 3 Fontanot, 92000 Nanterre</li>
+                                                        <li>Campus Cyber : 5-7 rue Bellini, 92800 La Défense</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>NANTES</strong>
+                                                    <ul>
+                                                        <li>Campus de la Chantrerie : 9 Rue Alfred Kastler, 44300 Nantes</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="accordion__metadatas">
+                                            <span class="badge bg-emlv">EMLV</span>
+                                            <span class="badge bg-esilv">ESILV</span>
+                                            <span class="badge bg-iim">IIM</span>
+                                            <span class="badge bg-executive">EXECUTIVE</span>
+                                            <span class="mx-1">|</span>
+                                            <span>13 septembre 2023</span>
+                                            <span>|</span>
+                                            <span>Mise à jour le 29 mars 2024</span>
+                                            <span>|</span>
+                                            <button class="accordion__metadatas-share"><i class="fa-solid fa-share"></i></button>
+                                            <span>|</span>
+                                            <button class="accordion__metadatas-hashtag"><i class="fa-solid fa-hashtag"></i></button>
+                                        </div>
+                                        <hr>
+                                    </div>
+                                </div>
+
+                                <div class="py-0">
+                                    <div class="collapsible" onclick="toggleAccordion('acc2')">
+                                        <div style="flex: 1;">
+                                            <div class="accordion__title">Quelles sont les horaires et jours d'ouverture de la salle de sport ?</div>
+                                        </div>
+                                        <div class="accordion__chevron">
+                                            <i class="fa-solid fa-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                    <div id="acc2" class="collapse">
+                                        <div class="accordion__content">
+                                            <p>Tous les jours exceptés les jeudis, les jours fériés, le week-end et pendant les vacances scolaires.</p>
+                                            <p>12h15 – 14h00 et 17h30 – 19h15</p>
+                                        </div>
+                                        <div class="accordion__metadatas">
+                                            <span class="badge bg-emlv">EMLV</span>
+                                            <span class="badge bg-esilv">ESILV</span>
+                                            <span class="badge bg-iim">IIM</span>
+                                            <span class="mx-1">|</span>
+                                            <span>13 septembre 2023</span>
+                                            <span>|</span>
+                                            <span>Mise à jour le 6 octobre 2023</span>
+                                            <span>|</span>
+                                            <button class="accordion__metadatas-share"><i class="fa-solid fa-share"></i></button>
+                                            <span>|</span>
+                                            <button class="accordion__metadatas-hashtag"><i class="fa-solid fa-hashtag"></i></button>
+                                        </div>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pinned Videos -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Vidéos épinglées</h2>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-play-btn-fill"></i>
+                                    <span>Panorama des outils digitaux</span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-play-btn-fill"></i>
+                                    <span>Bienvenue à l'ESILV !</span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-play-btn-fill"></i>
+                                    <span>Bienvenue à l'EMLV !</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pinned Tutorials -->
+                <div class="col-md-6 mt-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Tutoriels épinglés</h2>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-file-earmark-post"></i>
+                                    <span>Comment faire une capture d'écran complète ?</span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-file-earmark-post"></i>
+                                    <span>Comment vider son cache ?</span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="bi bi-file-earmark-post"></i>
+                                    <span>Comment créer une convention de stage</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === 'block') {
+                element.style.display = 'none';
+            } else {
+                element.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
