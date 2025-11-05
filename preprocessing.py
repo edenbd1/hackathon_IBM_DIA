@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 # Charger le fichier XLSX
 file_path = 'Data.xlsx'
@@ -37,6 +38,7 @@ def merge_lines(df):
     merged_df = pd.DataFrame(merged_data)
     
     return merged_df
+    
 
 # Appliquer la fonction pour fusionner les lignes
 merged_df = merge_lines(df)
@@ -70,8 +72,23 @@ merged_df_cleaned = merge_lines(df_cleaned)
 merged_df_cleaned.head()
 
 
-# Enregistrer le fichier transformé
-output_file_path = 'Transformed_Data.xlsx'
-merged_df_cleaned.to_excel(output_file_path, index=False)
+# Fonction pour nettoyer les parties non textuelles dans 'Content'
+def clean_non_sentences(df):
+    # Supprimer les balises HTML et les parties non textuelles
+    df['Content'] = df['Content'].apply(
+        lambda x: re.sub(r'<[^>]+>', '', str(x)) if pd.notna(x) else x
+    )
+    return df
 
-output_file_path
+# Appliquer la fonction pour nettoyer les parties non textuelles
+df_cleaned_content = clean_non_sentences(merged_df_cleaned)
+
+# Afficher un aperçu du résultat
+df_cleaned_content.head()
+
+
+# Enregistrer le fichier transformé et nettoyé
+cleaned_file_path = 'Cleaned_Transformed_Data.xlsx'
+df_cleaned_content.to_excel(cleaned_file_path, index=False)
+
+cleaned_file_path
