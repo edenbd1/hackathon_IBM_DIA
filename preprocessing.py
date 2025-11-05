@@ -72,23 +72,28 @@ merged_df_cleaned = merge_lines(df_cleaned)
 merged_df_cleaned.head()
 
 
-# Fonction pour nettoyer les parties non textuelles dans 'Content'
-def clean_non_sentences(df):
-    # Supprimer les balises HTML et les parties non textuelles
-    df['Content'] = df['Content'].apply(
-        lambda x: re.sub(r'<[^>]+>', '', str(x)) if pd.notna(x) else x
-    )
-    return df
+# Fonction pour nettoyer les balises HTML et les entités comme &nbsp;
+def clean_html_and_entities(text):
+    if pd.isna(text):
+        return text
+    # Supprimer les balises HTML
+    clean_text = re.sub(r'<[^>]+>', '', text)
+    # Remplacer les entités HTML comme &nbsp;
+    clean_text = clean_text.replace('&nbsp;', ' ')
+    # Nettoyer les espaces superflus
+    clean_text = ' '.join(clean_text.split())
+    return clean_text
 
-# Appliquer la fonction pour nettoyer les parties non textuelles
-df_cleaned_content = clean_non_sentences(merged_df_cleaned)
+# Appliquer la fonction de nettoyage aux colonnes 'Title' et 'Content'
+merged_df_cleaned['Title'] = merged_df_cleaned['Title'].apply(clean_html_and_entities)
+merged_df_cleaned['Content'] = merged_df_cleaned['Content'].apply(clean_html_and_entities)
 
 # Afficher un aperçu du résultat
-df_cleaned_content.head()
+merged_df_cleaned.head()
 
 
 # Enregistrer le fichier transformé et nettoyé
 cleaned_file_path = 'Cleaned_Transformed_Data.xlsx'
-df_cleaned_content.to_excel(cleaned_file_path, index=False)
+merged_df_cleaned.to_excel(cleaned_file_path, index=False)
 
 cleaned_file_path
