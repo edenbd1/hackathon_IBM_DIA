@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <style>
-      body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
-        color: #ffffff;
-        position: relative;
-        overflow: hidden;
-      }
+<meta charset="UTF-8">
+<title>DeVinci Chat</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
 
-      /* Texte DeVinci en arrière-plan */
-      .background-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 8rem; /* taille énorme pour effet subtil */
-        color: rgba(255, 255, 255, 0.08); /* gris très clair et très transparent */
-        font-weight: bold;
-        pointer-events: none; /* pour ne pas gêner les clics */
-        user-select: none;
-        white-space: nowrap;
-      }
+  .background-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    color: rgba(255, 255, 255, 0.08);
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
 
-      .container {
+  
+  .container {
         background: rgba(0, 0, 0, 0.6);
         padding: 1rem 2rem 1rem 2rem;
         border-radius: 8px;
@@ -42,58 +42,88 @@
         z-index: 1;
       }
 
-      h1 {
-        text-align: center;
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-        font-size: 1.4rem;
-        color: #efefef;
-      }
 
-      .input-group {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
+  .chat-box {
+    height: calc(100% - 4rem - 1rem); /* espace réservé pour la zone de saisie + marge */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
 
-      textarea {
-        flex: 1;
-        padding: 0.75rem;
-        padding-right: 60px;
-        border: none;
-        border-radius: 6px;
-        resize: none;
-        font-size: 1rem;
-        font-family: inherit;
-        box-sizing: border-box;
-        background-color: #efefef; 
-        color: #333333;
-      }
+  .message {
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    max-width: 80%;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease-in-out;
+  }
 
-      button {
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-        width: 48px;
-        height: 48px;
-        padding: 0;
-        border: none;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
-        color: #ffffff;
-        cursor: pointer;
-        font-size: 1.4rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  .user-message {
+    align-self: flex-end;
+    background-color: #f7f6f5;
+    color: #000;
+  }
 
-      button:hover {
-        opacity: 0.9;
-      }
-    </style>
+  .bot-message {
+    align-self: flex-start;
+    background-color: #fefdfd;
+    color: #080808;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  textarea {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 6px;
+    resize: none;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    background-color: #efefef;
+    color: #333333;
+    height: 3.5rem; /* zone de saisie un peu plus haute */
+  }
+
+  button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+</style>
 </head>
+<body>
+<div class="background-text">DeVinci</div>
+
 <div class="container">
   <!-- Boîte de chat -->
   <div class="chat-box" id="chatBox" style="max-height:300px; overflow-y:auto; margin-bottom:1rem;"></div>
@@ -115,16 +145,7 @@ function addMessage(text, sender) {
     const div = document.createElement('div');
     div.textContent = text;
     div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-    div.style.margin = '0.5rem 0';
-    div.style.padding = '0.5rem 1rem';
-    div.style.borderRadius = '12px';
-    div.style.maxWidth = '80%';
-    div.style.wordWrap = 'break-word';
-    div.style.alignSelf = sender === 'user' ? 'flex-end' : 'flex-start';
-    div.style.backgroundColor = sender === 'user' ? '#f9d423' : '#333';
-    div.style.color = sender === 'user' ? '#000' : '#fff';
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.prepend(div);
 }
 
 form.addEventListener('submit', async function(event){
@@ -148,7 +169,6 @@ form.addEventListener('submit', async function(event){
     }
 });
 
-// Envoi avec Enter sauf si Shift
 textarea.addEventListener('keydown', function(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
@@ -156,3 +176,5 @@ textarea.addEventListener('keydown', function(event) {
     }
 });
 </script>
+</body>
+</html>
