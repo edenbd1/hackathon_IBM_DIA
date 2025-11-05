@@ -3,18 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <title>Posez votre question</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+        color: #ffffff;
+      }
+      .container {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 1rem 2rem 1rem 2rem;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.4rem;
+        color: #b7a8a8; /* gris clair pour le titre */
+      }
+      .input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      textarea {
+        flex: 1;
+        padding: 0.75rem;
+        padding-right: 60px;
+        border: none;
+        border-radius: 6px;
+        resize: none;
+        font-size: 1rem;
+        font-family: inherit;
+        box-sizing: border-box;
+        background-color: #b7a8a8; 
+        color: #333333;
+      }
+      button {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff4e50 0%, #f9d423 100%);
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 1.4rem; /* un peu plus grand pour épaisseur flèche */
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
 </head>
 <body>
-    <h1>Posez votre question</h1>
-    <form action="{{ url_for('answer') }}" method="post">
-        <label for="question">Votre question :</label><br>
-        <textarea id="question" name="question" rows="4" cols="50" required></textarea><br><br>
-        <button type="submit">Envoyer</button>
+  <div class="container">
+    <form id="questionForm" action="{{ url_for('answer') }}" method="post">
+      <div class="input-group">
+        <textarea id="question" name="question" rows="3" placeholder="Écrivez votre question ici..." required></textarea>
+        <button type="submit">↵</button>
+      </div>
     </form>
+  </div>
 
-    {% if answer %}
-    <h2>Réponse :</h2>
-    <p>{{ answer }}</p>
-    {% endif %}
+  <script>
+    const textarea = document.getElementById('question');
+    const form = document.getElementById('questionForm');
+
+    textarea.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        if (!event.shiftKey) {
+          event.preventDefault();
+          form.submit();
+        }
+      }
+    });
+  </script>
 </body>
 </html>
