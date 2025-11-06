@@ -192,18 +192,13 @@ function App() {
               energy: item.Server * 1000
             });
           }
-          if (item.Laptop1 > 0) {
+          // Fusionner Laptop1 et Laptop2 en une seule catégorie "Laptop"
+          const laptopEnergy = (item.Laptop1 || 0) + (item.Laptop2 || 0);
+          if (laptopEnergy > 0) {
             platforms.push({
               model: item.model,
-              platform: 'Laptop1',
-              energy: item.Laptop1 * 1000
-            });
-          }
-          if (item.Laptop2 > 0) {
-            platforms.push({
-              model: item.model,
-              platform: 'Laptop2',
-              energy: item.Laptop2 * 1000
+              platform: 'Laptop',
+              energy: laptopEnergy * 1000
             });
           }
           return platforms;
@@ -483,8 +478,7 @@ function App() {
                         // Couleur de la barre selon la plateforme
                         let fill = '#8b5cf6'; // Violet pour Workstation
                         if (payload.platform === 'Server') fill = '#2563eb'; // Bleu
-                        else if (payload.platform === 'Laptop1') fill = '#f59e0b'; // Orange
-                        else if (payload.platform === 'Laptop2') fill = '#10b981'; // Vert
+                        else if (payload.platform === 'Laptop') fill = '#10b981'; // Vert
                         
                         return (
                           <rect
@@ -506,23 +500,27 @@ function App() {
                 <div style={{ 
                   position: 'relative',
                   height: '40px',
-                  marginTop: '5px',
-                  paddingLeft: '40px',
-                  paddingRight: '20px'
+                  marginTop: '-15px',
+                  marginLeft: '27px',
+                  marginRight: '20px'
                 }}>
                   {(() => {
                     const uniqueModels = [];
+                    const modelIndices = []; // Position de la première barre de chaque modèle
                     const modelCounts = [];
                     let lastModel = null;
                     let count = 0;
+                    let firstIndex = 0;
                     
                     energyByModelData.forEach((item, index) => {
                       if (item.model !== lastModel) {
                         if (lastModel !== null) {
                           uniqueModels.push(lastModel);
+                          modelIndices.push(firstIndex);
                           modelCounts.push(count);
                         }
                         lastModel = item.model;
+                        firstIndex = index;
                         count = 1;
                       } else {
                         count++;
@@ -531,24 +529,24 @@ function App() {
                     
                     if (lastModel !== null) {
                       uniqueModels.push(lastModel);
+                      modelIndices.push(firstIndex);
                       modelCounts.push(count);
                     }
                     
                     const totalBars = energyByModelData.length;
-                    let cumulativePercent = 0;
                     
                     return uniqueModels.map((model, idx) => {
+                      // Centre du groupe de barres
+                      const startPercent = (modelIndices[idx] / totalBars) * 100;
                       const widthPercent = (modelCounts[idx] / totalBars) * 100;
-                      const leftPosition = cumulativePercent;
-                      const centerPosition = leftPosition + (widthPercent / 2);
-                      cumulativePercent += widthPercent;
+                      const centerPercent = startPercent + (widthPercent / 2);
                       
                       return (
                         <div 
                           key={model} 
                           style={{ 
                             position: 'absolute',
-                            left: `${centerPosition}%`,
+                            left: `${centerPercent}%`,
                             transform: 'translateX(-50%)',
                             fontSize: '9px',
                             color: '#5a7a4a',
@@ -558,7 +556,7 @@ function App() {
                         >
                           <span style={{
                             transform: 'rotate(-25deg)',
-                            transformOrigin: 'left center',
+                            transformOrigin: 'center center',
                             display: 'inline-block'
                           }}>
                             {model}
@@ -567,6 +565,28 @@ function App() {
                       );
                     });
                   })()}
+                </div>
+                
+                {/* Légende des plateformes */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  gap: '15px',
+                  marginTop: '-3px',
+                  fontSize: '10px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ width: '12px', height: '12px', backgroundColor: '#8b5cf6', borderRadius: '2px' }}></div>
+                    <span style={{ color: '#5a7a4a' }}>Workstation</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ width: '12px', height: '12px', backgroundColor: '#2563eb', borderRadius: '2px' }}></div>
+                    <span style={{ color: '#5a7a4a' }}>Server</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ width: '12px', height: '12px', backgroundColor: '#10b981', borderRadius: '2px' }}></div>
+                    <span style={{ color: '#5a7a4a' }}>Laptop</span>
+                  </div>
                 </div>
               </div>
             </div>
