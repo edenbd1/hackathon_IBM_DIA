@@ -37,14 +37,14 @@ function App() {
   ];
 
   const energyOptions = [
-    { name: 'Mix France', value: 'mix_france', co2PerKwh: 32 },
-    { name: 'Nucléaire', value: 'nuclear', co2PerKwh: 6 },
-    { name: 'Éolien', value: 'wind', co2PerKwh: 7 },
-    { name: 'Solaire', value: 'solar', co2PerKwh: 41 },
-    { name: 'Hydraulique', value: 'hydro', co2PerKwh: 6 },
-    { name: 'Gaz naturel', value: 'gas', co2PerKwh: 490 },
-    { name: 'Charbon', value: 'coal', co2PerKwh: 820 },
-    { name: 'Mix UE', value: 'mix_eu', co2PerKwh: 275 },
+    { name: 'France Mix', value: 'mix_france', co2PerKwh: 32 },
+    { name: 'Nuclear', value: 'nuclear', co2PerKwh: 6 },
+    { name: 'Wind', value: 'wind', co2PerKwh: 7 },
+    { name: 'Solar', value: 'solar', co2PerKwh: 41 },
+    { name: 'Hydro', value: 'hydro', co2PerKwh: 6 },
+    { name: 'Natural Gas', value: 'gas', co2PerKwh: 490 },
+    { name: 'Coal', value: 'coal', co2PerKwh: 820 },
+    { name: 'EU Mix', value: 'mix_eu', co2PerKwh: 275 },
   ];
 
   const platformMapping = {
