@@ -613,27 +613,57 @@ function App() {
 
             <div className="chart-card">
               <h3 className="chart-title">Energy Efficiency: Consumption vs Performance</h3>
-              <div style={{ width: '100%', height: '215px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ResponsiveContainer width="100%" height={215}>
-                  <ScatterChart margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+              <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart 
+                    data={(() => {
+                      // Préparer les données avec des indices séparés pour chaque modèle
+                      const gemma2B = efficiencyData
+                        .filter(d => d.model === 'Gemma 2B')
+                        .sort((a, b) => a.energy - b.energy)
+                        .map((d, i) => ({ index: i, 'Gemma 2B': d.energy }));
+                      
+                      const gemma7B = efficiencyData
+                        .filter(d => d.model === 'Gemma 7B')
+                        .sort((a, b) => a.energy - b.energy)
+                        .map((d, i) => ({ index: i, 'Gemma 7B': d.energy }));
+                      
+                      // Fusionner les deux tableaux en gardant tous les points
+                      const maxLength = Math.max(gemma2B.length, gemma7B.length);
+                      const result = [];
+                      
+                      for (let i = 0; i < maxLength; i++) {
+                        const point = { index: i };
+                        if (gemma2B[i]) point['Gemma 2B'] = gemma2B[i]['Gemma 2B'];
+                        if (gemma7B[i]) point['Gemma 7B'] = gemma7B[i]['Gemma 7B'];
+                        result.push(point);
+                      }
+                      
+                      return result;
+                    })()}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#c8ddb5" />
-                    <XAxis dataKey="responseLength" tick={{ fontSize: 10 }} stroke="#5a7a4a" label={{ value: 'Response Length (words)', position: 'insideBottom', offset: -5, fontSize: 10 }} />
-                    <YAxis dataKey="energy" tick={{ fontSize: 10 }} stroke="#5a7a4a" label={{ value: 'Wh', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+                    <XAxis 
+                      dataKey="index" 
+                      tick={{ fontSize: 10 }} 
+                      stroke="#5a7a4a" 
+                      label={{ value: 'Sample Index', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 10 }} 
+                      stroke="#5a7a4a" 
+                      label={{ value: 'Wh', angle: -90, position: 'insideLeft', fontSize: 10 }}
+                      domain={[0, 'auto']}
+                    />
                     <Tooltip 
                       contentStyle={{ backgroundColor: '#f5f5f5', border: '1px solid #5a7a4a', borderRadius: '8px', fontSize: '11px' }}
-                      formatter={(value, name) => {
-                        if (name === 'energy') return [`${value} Wh`, 'Energy'];
-                        if (name === 'duration') return [`${value}s`, 'Duration'];
-                        return value;
-                      }}
+                      formatter={(value) => value ? [`${value.toFixed(4)} Wh`] : ['-']}
+                      labelFormatter={(value) => `Sample ${value}`}
                     />
-                    <Legend wrapperStyle={{ fontSize: '10px' }} />
-                    <Scatter name="Gemma 2B" data={efficiencyData.filter(d => d.model === 'Gemma 2B')} fill="#4ade80" />
-                    <Scatter name="Gemma 7B" data={efficiencyData.filter(d => d.model === 'Gemma 7B')} fill="#22c55e" />
-                    <Scatter name="Llama3 8B" data={efficiencyData.filter(d => d.model === 'Llama3 8B')} fill="#fbbf24" />
-                    <Scatter name="CodeLlama 70B" data={efficiencyData.filter(d => d.model === 'CodeLlama 70B')} fill="#fb923c" />
-                    <Scatter name="Llama3 70B" data={efficiencyData.filter(d => d.model === 'Llama3 70B')} fill="#ef4444" />
-                  </ScatterChart>
+                    <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '5px' }} /> 
+                    <Line name="Gemma 7B" type="monotone" dataKey="Gemma 7B" stroke="#8b5cf6" strokeWidth={2} dot={{ fill: '#8b5cf6', r: 3 }} connectNulls />
+                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>

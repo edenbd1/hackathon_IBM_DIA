@@ -302,7 +302,7 @@ def predict_energy_ibm_wml(prompt_text, model, platform):
 
 def load_all_csv_files():
     """Load all CSV files from the data directory"""
-    csv_files = [f for f in os.listdir(DATA_DIR) if f.endswith('.csv')]
+    csv_files = sorted([f for f in os.listdir(DATA_DIR) if f.endswith('.csv')])  # Sort for deterministic order
     all_data = []
     
     for file in csv_files:
@@ -347,7 +347,11 @@ def load_all_csv_files():
             print(f"Error loading {file}: {e}")
     
     if all_data:
-        return pd.concat(all_data, ignore_index=True)
+        df_combined = pd.concat(all_data, ignore_index=True)
+        # Sort for deterministic order
+        if 'model' in df_combined.columns:
+            df_combined = df_combined.sort_values(by=['model', 'platform']).reset_index(drop=True)
+        return df_combined
     return pd.DataFrame()
 
 # Load data once at startup
@@ -501,45 +505,86 @@ def energy_efficiency():
     
     # Helper function to format model names for frontend
     def format_model_name(model):
-        # Convert from "alpaca_gemma_2b" to "Gemma 2B"
+        # Convert from "alpaca_gemma_2b" or "gemma_2b" to "Gemma 2B"
         # Convert from "codellama_70b" to "CodeLlama 70B"
         # Convert from "alpaca_llama3_8b" to "Llama3 8B"
-        if 'gemma_2b' in model:
+        model_lower = model.lower()
+        if 'gemma' in model_lower and '2b' in model_lower:
             return 'Gemma 2B'
-        elif 'gemma_7b' in model:
+        elif 'gemma' in model_lower and '7b' in model_lower:
             return 'Gemma 7B'
-        elif 'llama3_8b' in model:
+        elif 'llama3' in model_lower and '8b' in model_lower:
             return 'Llama3 8B'
-        elif 'llama3_70b' in model:
+        elif 'llama3' in model_lower and '70b' in model_lower:
             return 'Llama3 70B'
-        elif 'codellama_70b' in model:
+        elif 'codellama' in model_lower and '70b' in model_lower:
             return 'CodeLlama 70B'
-        elif 'codellama_7b' in model:
+        elif 'codellama' in model_lower and '7b' in model_lower:
             return 'CodeLlama 7B'
         else:
             return model
     
-    # Sample 100 diverse data points then select 10
-    sample = df_all.sample(min(100, len(df_all)))
+    # Log unique raw model names in data
+    raw_models = df_all['model'].unique()
+    print(f"\n=== Raw model names in data ===")
+    for raw_model in raw_models:
+        print(f"  - '{raw_model}'")
+    print("=" * 40)
     
+    # Sort dataframe for deterministic iteration
+    df_sorted = df_all.sort_values(by=['model', 'energy_consumption_llm_total', 'word_count'])
+    
+    # Use all available data, no sampling
     result = []
-    for _, row in sample.iterrows():
+    for _, row in df_sorted.iterrows():
         if pd.notna(row.get('word_count')) and pd.notna(row.get('energy_consumption_llm_total')):
+            raw_model_name = row['model']
+            formatted_name = format_model_name(raw_model_name)
             result.append({
                 'responseLength': int(row['word_count']),
-                'energy': round(row['energy_consumption_llm_total'], 6),  # Keep more decimals
-                'model': format_model_name(row['model']),
+                'energy': round(row['energy_consumption_llm_total'], 6),
+                'model': formatted_name,
                 'duration': round(row.get('total_duration', 0) / 1e9, 1) if pd.notna(row.get('total_duration')) else 0
             })
     
-    # Limit to 10 most diverse points
-    if len(result) > 10:
-        # Sort by energy and take evenly spaced samples
-        result = sorted(result, key=lambda x: x['energy'])
-        step = len(result) // 10
-        result = [result[i*step] for i in range(10)]
+    # Group by model and select many points for each model
+    from collections import defaultdict
+    models_data = defaultdict(list)
+    for item in result:
+        models_data[item['model']].append(item)
     
-    return jsonify(result)
+    print(f"\n=== Models found after formatting ===")
+    for model_name in sorted(models_data.keys()):
+        print(f"  - '{model_name}' with {len(models_data[model_name])} points")
+    print("=" * 40)
+    
+    # Select up to 30 diverse points per model - in deterministic order
+    # Filter to keep only Gemma 2B and Gemma 7B
+    final_result = []
+    target_models = ['Gemma 2B', 'Gemma 7B']
+    for model in sorted(models_data.keys()):  # Sort model names for consistency
+        if model not in target_models:
+            continue  # Skip models that are not Gemma 2B or Gemma 7B
+        points = models_data[model]
+        # Sort by energy first, then by responseLength for stable sorting
+        sorted_points = sorted(points, key=lambda x: (x['energy'], x['responseLength']))
+        
+        if len(sorted_points) <= 30:
+            final_result.extend(sorted_points)
+        else:
+            # Take evenly distributed points
+            step = len(sorted_points) / 30
+            indices = [int(i * step) for i in range(30)]
+            final_result.extend([sorted_points[i] for i in indices if i < len(sorted_points)])
+    
+    print(f"Total points returned: {len(final_result)}")
+    for model in sorted(set(item['model'] for item in final_result)):
+        count = len([item for item in final_result if item['model'] == model])
+        model_points = [item for item in final_result if item['model'] == model]
+        energies = [item['energy'] for item in model_points[:5]]  # First 5 energies
+        print(f"  {model}: {count} points - First 5 energies: {energies}")
+    
+    return jsonify(final_result)
 
 @app.route('/api/calculate-co2', methods=['POST'])
 def calculate_co2():
