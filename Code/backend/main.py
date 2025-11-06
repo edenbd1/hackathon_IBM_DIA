@@ -435,8 +435,7 @@ def energy_timeline():
     
     result = []
     for i in range(sample_size):
-        time_point = f"{10 + i*15//60:02d}:{i*15%60:02d}"
-        row = {'time': time_point}
+        row = {'time': f"Sample {i+1}"}
         
         for model, platform, key in configs:
             filtered = df_all[(df_all['model'] == model) & (df_all['platform'] == platform)]
@@ -448,6 +447,51 @@ def energy_timeline():
         result.append(row)
     
     return jsonify(result[:sample_size])
+
+@app.route('/api/gpu-cpu-distribution', methods=['GET'])
+def gpu_cpu_distribution():
+    """Get GPU vs CPU energy consumption by model (workstation GPU vs laptop1/server CPU)"""
+    if df_all.empty:
+        return jsonify({'error': 'No data available'}), 500
+    
+    result = []
+    
+    # Get all unique models
+    models = df_all['model'].unique()
+    
+    for model in sorted(models):
+        # Get GPU consumption from workstation (GPU-dominant platform)
+        workstation_data = df_all[(df_all['model'] == model) & (df_all['platform'] == 'workstation')]
+        
+        # Get CPU consumption from laptop1 or server (CPU-dominant platforms)
+        laptop1_data = df_all[(df_all['model'] == model) & (df_all['platform'] == 'laptop1')]
+        server_data = df_all[(df_all['model'] == model) & (df_all['platform'] == 'server')]
+        
+        # Use laptop1 if available, otherwise server
+        cpu_data = laptop1_data if not laptop1_data.empty else server_data
+        
+        # Only include models that have both workstation (GPU) and laptop1/server (CPU) data
+        if not workstation_data.empty and not cpu_data.empty:
+            gpu_energy = workstation_data['energy_consumption_llm_gpu'].mean()
+            cpu_energy = cpu_data['energy_consumption_llm_cpu'].mean()
+            
+            # Format model name for display (remove prefixes, clean up)
+            model_display = model.replace('alpaca_', '').replace('codefeedback_', '').replace('_', ' ')
+            # Capitalize properly
+            if 'gemma' in model_display:
+                model_display = model_display.replace('gemma', 'Gemma')
+            if 'llama3' in model_display:
+                model_display = model_display.replace('llama3', 'Llama3')
+            if 'codellama' in model_display:
+                model_display = model_display.replace('codellama', 'CodeLlama')
+            
+            result.append({
+                'model': model_display.strip().title(),
+                'GPU': round(gpu_energy * 1000, 2),  # Convert to Wh
+                'CPU': round(cpu_energy * 1000, 2)   # Convert to Wh
+            })
+    
+    return jsonify(result)
 
 @app.route('/api/energy-efficiency', methods=['GET'])
 def energy_efficiency():

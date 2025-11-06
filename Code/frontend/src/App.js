@@ -20,7 +20,7 @@ function App() {
 
   // Data from backend
   const [energyByModelData, setEnergyByModelData] = useState([]);
-  const [timelineData, setTimelineData] = useState([]);
+  const [gpuCpuDistributionData, setGpuCpuDistributionData] = useState([]);
   const [efficiencyData, setEfficiencyData] = useState([]);
   const [availableModels, setAvailableModels] = useState([]);
   const [availablePlatforms, setAvailablePlatforms] = useState([]);
@@ -212,21 +212,14 @@ function App() {
       })
       .catch(err => console.error('Error fetching energy-by-model:', err));
 
-    // Fetch timeline data
-    fetch(`${API_BASE_URL}/energy-timeline`)
+    // Fetch GPU vs CPU distribution data
+    fetch(`${API_BASE_URL}/gpu-cpu-distribution`)
       .then(res => res.json())
       .then(data => {
-        console.log('Timeline data:', data);
-        // Convert kWh to Wh (multiply by 1000)
-        const convertedData = data.map(item => ({
-          ...item,
-          CodeLlama_WS: item.CodeLlama_WS * 1000,
-          Gemma2B_L1: item.Gemma2B_L1 * 1000,
-          Llama3_70B_S: item.Llama3_70B_S * 1000
-        }));
-        setTimelineData(convertedData);
+        console.log('GPU-CPU distribution data:', data);
+        setGpuCpuDistributionData(data);
       })
-      .catch(err => console.error('Error fetching timeline:', err));
+      .catch(err => console.error('Error fetching GPU-CPU distribution:', err));
 
     // Fetch efficiency data
     fetch(`${API_BASE_URL}/energy-efficiency`)
@@ -579,19 +572,21 @@ function App() {
             </div>
 
             <div className="chart-card">
-              <h3 className="chart-title">Energy Consumption Timeline</h3>
+              <h3 className="chart-title">GPU vs CPU Energy Consumption by Model</h3>
               <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={timelineData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                  <BarChart data={gpuCpuDistributionData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#c8ddb5" />
-                    <XAxis dataKey="time" tick={{ fontSize: 10 }} stroke="#5a7a4a" />
+                    <XAxis dataKey="model" tick={{ fontSize: 8 }} stroke="#5a7a4a" angle={-45} textAnchor="end" height={60} />
                     <YAxis tick={{ fontSize: 10 }} stroke="#5a7a4a" label={{ value: 'Wh', angle: -90, position: 'insideLeft', fontSize: 10 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#f5f5f5', border: '1px solid #5a7a4a', borderRadius: '8px', fontSize: '11px' }} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#f5f5f5', border: '1px solid #5a7a4a', borderRadius: '8px', fontSize: '11px' }}
+                      formatter={(value, name) => [`${value} Wh`, name]}
+                    />
                     <Legend wrapperStyle={{ fontSize: '10px' }} />
-                    <Line type="monotone" dataKey="CodeLlama_WS" stroke="#fb923c" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="Gemma2B_L1" stroke="#4ade80" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="Llama3_70B_S" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
-                  </LineChart>
+                    <Bar dataKey="GPU" fill="#8b5cf6" />
+                    <Bar dataKey="CPU" fill="#10b981" />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
