@@ -5,17 +5,34 @@ import { Youtube, FileMinus } from 'lucide-react';
 import SearchResponseComponent from "@/components/SearchCard";
 import Chip from "@/components/Chip";
 import WaitingSection from "@/components/WaitingSection";
+import { searchSuggestions } from "@/utils/constants/mockSearch";
+import { mockThemes } from "@/utils/constants/mockTheme";
 
 export default function Home() {
   return (
-    <div className="mx-auto px-4 py-8">
+    <div className="mx-14 my-12 flex flex-col gap-8">
 
-      <Chip title="LOL"/>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SearchResponseComponent/>
+        </div>
+        <div className="lg:col-span-1 flex flex-col">
+          <h1 className="font-bold text-xl strong-blue mb-4">Thématiques</h1>
+          <div className="flex flex-wrap gap-2">
+            {mockThemes.map((theme) => (
+              <Chip 
+                key={theme.id}
+                title={theme.label}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
       <WaitingSection/>
       
-      <div className="">
-        <SearchResponseComponent/>
-        {/* Exemple 1 - Questions fréquentes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
         <DropdownCard
           title="Questions épinglées"
           questions={[
@@ -24,7 +41,6 @@ export default function Home() {
           ]}
         />
 
-        {/* Exemple 2 - Vidéos épinglées */}
         <ListCard
           title="Vidéos épinglées"
           items={[
@@ -46,7 +62,6 @@ export default function Home() {
           ]}
         />
 
-        {/* Exemple 3 - Tutoriels épinglés */}
         <ListCard
           title="Tutoriels épinglés"
           items={[
