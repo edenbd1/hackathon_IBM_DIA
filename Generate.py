@@ -52,6 +52,6 @@ def query(question):
 
 
     generated_response = model.generate_text(prompt=prompt_input, guardrails=False)
-    cleaned_response = generated_response.split('\nEntrée')[0]
+    cleaned_response = generated_response.split('\nEntrée')[0].replace("\n",' ')
 
     return cleaned_response
