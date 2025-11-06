@@ -3,10 +3,13 @@ import Card from "../components/utils/Card";
 import ListCard from "../components/ListCard";
 import { Youtube, FileMinus } from 'lucide-react';
 import SearchResponseComponent from "@/components/SearchCard";
+import Chip from "@/components/utils/Chip";
 
 export default function Home() {
   return (
     <div className="mx-auto px-4 py-8">
+
+      <Chip title="LOL"/>
       
       <div className="">
         <SearchResponseComponent/>
