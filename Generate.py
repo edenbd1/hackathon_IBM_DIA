@@ -1,6 +1,5 @@
 import os
-from ibm_watsonx_ai import APIClient, Credentials
-import getpass
+from ibm_watsonx_ai import Credentials
 import csv
 
 credentials = Credentials(
@@ -53,5 +52,6 @@ def query(question):
 
     generated_response = model.generate_text(prompt=prompt_input, guardrails=False)
     cleaned_response = generated_response.split('\nEntrée')[0].replace("\n",' ')
-
+    print("generated_response:", generated_response)
+    cleaned_response= cleaned_response if ("Entrée : " not in cleaned_response and "Sortie : " not in cleaned_response)  else "Désolé, je n'ai pas la réponse.\n Veuillez contacter : scolarite-esilv@devinci.fr "
     return cleaned_response

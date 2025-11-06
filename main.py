@@ -32,13 +32,33 @@ def satisfied():
 
     if question and answer:
         csv_file = "/Users/tiago/hackathon_IBM_DIA/data_pretraitee.csv"
-        # On ajoute la ligne à la fin du CSV
-        with open(csv_file, 'a', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=['Title', 'Content'])
-            writer.writerow({'Title': question, 'Content': answer})
-        return jsonify({"success": True})
-    return jsonify({"error": "Question ou réponse manquante"}), 400
 
+        # Lecture du dernier id pour l'incrémentation
+        try:
+            with open(csv_file, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+                last_id = int(rows[-1]['id']) if rows else 0
+        except FileNotFoundError:
+            # Si le fichier n'existe pas encore
+            last_id = 0
+
+        new_id = last_id + 1
+
+        # Écriture de la nouvelle ligne
+        with open(csv_file, 'a', newline='', encoding='utf-8') as f:
+            fieldnames = ['id', 'Title', 'Content']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+            # Si le fichier est vide, on ajoute l'en-tête
+            if f.tell() == 0:
+                writer.writeheader()
+
+            writer.writerow({'id': new_id, 'Title': question, 'Content': answer})
+
+        return jsonify({"success": True, "id": new_id})
+
+    return jsonify({"error": "Question ou réponse manquante"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
