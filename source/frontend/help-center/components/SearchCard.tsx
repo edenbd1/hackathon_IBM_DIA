@@ -35,13 +35,23 @@ export default function SearchResponseComponent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleOpenHelpAI = () => {
+    console.log('Ouverture de la modal HelpAI');
+    setOpen(false);
+    setSelectedIndex(0);
+  };
+
   const handleSelect = (suggestionId: string) => {
     const suggestion = filteredSuggestions.find(s => s.id === suggestionId);
     if (suggestion) {
-      console.log('Selected:', suggestion.label);
-      setSearchValue(suggestion.label);
-      setOpen(false);
-      setSelectedIndex(0);
+      if (suggestion.id === 'help-ai') {
+        handleOpenHelpAI();
+      } else {
+        console.log('Selected:', suggestion.label);
+        setSearchValue(suggestion.label);
+        setOpen(false);
+        setSelectedIndex(0);
+      }
     }
   };
 
@@ -154,7 +164,7 @@ export default function SearchResponseComponent() {
           Je ne trouve pas ma réponse
         </h2>
         <button
-          onClick={() => handleSelect('help-ai')}
+          onClick={handleOpenHelpAI}
           className="text-white underline hover:text-violet-300 transition-colors text-sm"
         >
           Ouvrir une demande d'aide
