@@ -1,9 +1,18 @@
-import chromadb
+from sentence_transformers import SentenceTransformer
+from chromadb.utils import embedding_functions
+
+# Exemple : modèle multilingue E5
+embedder = embedding_functions.SentenceTransformerEmbeddingFunction(
+    model_name="intfloat/multilingual-e5-base"
+)
+
+from chromadb import Client
+from chromadb.config import Settings
 
 class db():
     def __init__(self):
-        self.client = chromadb.Client()
-        self.collection = self.client.get_or_create_collection(name="documents")
+        self.client = Client(Settings(persist_directory="./chroma_db"))
+        self.collection = self.client.get_or_create_collection(name="my_multilingual_rag", embedding_function=embedder)
 
     def add_document(self, document, doc_id):
         self.collection.add(
