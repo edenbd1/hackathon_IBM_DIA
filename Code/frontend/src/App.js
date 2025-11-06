@@ -421,8 +421,8 @@ function App() {
           <div className="charts-container">
             <div className="chart-card">
               <h3 className="chart-title">Energy Consumption by Model & Platform</h3>
-              <div style={{ width: '100%', height: '200px' }}>
-                <ResponsiveContainer width="100%" height={200}>
+              <div style={{ width: '100%', height: '180px' }}>
+                <ResponsiveContainer width="100%" height={180}>
                   <BarChart 
                     data={energyByModelData} 
                     margin={{ top: 10, right: 10, left: 10, bottom: 30 }}
@@ -571,19 +571,19 @@ function App() {
               </div>
             </div>
 
-            <div className="chart-card">
+            <div className="chart-card" style={{ minHeight: '250px', maxHeight: '280px', height: '280px' }}>
               <h3 className="chart-title">GPU vs CPU Energy Consumption by Model</h3>
-              <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={gpuCpuDistributionData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+              <div style={{ width: '100%', height: '215px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={215}>
+                  <BarChart data={gpuCpuDistributionData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#c8ddb5" />
-                    <XAxis dataKey="model" tick={{ fontSize: 8 }} stroke="#5a7a4a" angle={-45} textAnchor="end" height={60} />
+                    <XAxis dataKey="model" tick={{ fontSize: 8 }} stroke="#5a7a4a" angle={-45} textAnchor="end" height={50} />
                     <YAxis tick={{ fontSize: 10 }} stroke="#5a7a4a" label={{ value: 'Wh', angle: -90, position: 'insideLeft', fontSize: 10 }} />
                     <Tooltip 
                       contentStyle={{ backgroundColor: '#f5f5f5', border: '1px solid #5a7a4a', borderRadius: '8px', fontSize: '11px' }}
                       formatter={(value, name) => [`${value} Wh`, name]}
                     />
-                    <Legend wrapperStyle={{ fontSize: '10px' }} />
+                    <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '0px', marginTop: '-15px' }} />
                     <Bar dataKey="GPU" fill="#8b5cf6" />
                     <Bar dataKey="CPU" fill="#10b981" />
                   </BarChart>
@@ -593,8 +593,8 @@ function App() {
 
             <div className="chart-card">
               <h3 className="chart-title">Energy Efficiency: Consumption vs Performance</h3>
-              <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ResponsiveContainer width="100%" height={200}>
+              <div style={{ width: '100%', height: '215px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ResponsiveContainer width="100%" height={215}>
                   <ScatterChart margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#c8ddb5" />
                     <XAxis dataKey="responseLength" tick={{ fontSize: 10 }} stroke="#5a7a4a" label={{ value: 'Response Length (words)', position: 'insideBottom', offset: -5, fontSize: 10 }} />
