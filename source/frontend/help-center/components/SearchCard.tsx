@@ -16,10 +16,14 @@ export default function SearchResponseComponent() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Filtrer les suggestions basées sur la saisie
   const filteredSuggestions = searchSuggestions.filter(suggestion =>
+    suggestion.id === 'help-ai' || 
     suggestion.label.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  ).sort((a, b) => {
+    if (a.id === 'help-ai') return -1;
+    if (b.id === 'help-ai') return 1;
+    return 0;
+  });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -62,19 +66,18 @@ export default function SearchResponseComponent() {
     }
   };
 
-  // Reset selectedIndex quand les suggestions changent
   useEffect(() => {
     setSelectedIndex(0);
   }, [searchValue]);
 
   return (
     <Card color='bg-strong-blue'>
-      <h1 className="text-4xl font-bold text-white text-center mb-12">
+      <h1 className="text-lg font-bold text-white text-left py-4">
         Rechercher votre réponse
       </h1>
 
-      <div className="py-4 relative" ref={wrapperRef}>
-        <InputGroup>
+      <div className="pb-4 relative" ref={wrapperRef}>
+        <InputGroup className='bg-white h-12'>
           <InputGroupInput
             placeholder="Tapez votre question..."
             value={searchValue}
@@ -102,7 +105,7 @@ export default function SearchResponseComponent() {
                       key={suggestion.id}
                       onClick={() => handleSelect(suggestion.id)}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                      className={`w-full cursor-pointer flex items-center px-4 py-3 text-left transition-colors ${
                         suggestion.special
                           ? 'bg-linear-to-r from-violet-50 to-purple-50 border-l-4 border-violet-500 mx-1 rounded-r-md'
                           : index === selectedIndex
