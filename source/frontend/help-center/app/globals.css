@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #F5F8FA;
   --foreground: #171717;
   --grey-button: #EFF2F5;
   --bg-grey: #F5F8FA;
@@ -22,7 +22,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #F5F8FA;
     --foreground: #ededed;
     --grey-button: #EFF2F5;
     --bg-grey: #F5F8FA;
@@ -48,6 +48,10 @@ body {
 
 .strong-blue {
   color: var(--strong-blue);
+}
+
+.bg-strong-blue {
+  background-color: var(--strong-blue);
 }
 
 .purple-accent {
