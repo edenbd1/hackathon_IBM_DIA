@@ -613,42 +613,45 @@ function App() {
 
             <div className="chart-card">
               <h3 className="chart-title">Energy Efficiency: Consumption vs Performance</h3>
-              <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ResponsiveContainer width="100%" height={200}>
+              <div style={{ width: '100%', height: '215px' }}>
+                <ResponsiveContainer width="100%" height={205}>
                   <LineChart 
                     data={(() => {
-                      // Préparer les données avec des indices séparés pour chaque modèle
-                      const gemma2B = efficiencyData
-                        .filter(d => d.model === 'Gemma 2B')
-                        .sort((a, b) => a.energy - b.energy)
-                        .map((d, i) => ({ index: i, 'Gemma 2B': d.energy }));
+                      // Utiliser responseLength pour l'axe X
+                      const allData = efficiencyData
+                        .filter(d => d.model === 'Gemma 2B' || d.model === 'Gemma 7B')
+                        .sort((a, b) => a.responseLength - b.responseLength);
                       
-                      const gemma7B = efficiencyData
-                        .filter(d => d.model === 'Gemma 7B')
-                        .sort((a, b) => a.energy - b.energy)
-                        .map((d, i) => ({ index: i, 'Gemma 7B': d.energy }));
+                      // Créer un objet par responseLength unique
+                      const dataMap = {};
+                      allData.forEach(d => {
+                        const key = d.responseLength;
+                        if (!dataMap[key]) {
+                          dataMap[key] = { 
+                            responseLength: key,
+                            duration2B: null,
+                            duration7B: null
+                          };
+                        }
+                        if (d.model === 'Gemma 2B') {
+                          dataMap[key]['Gemma 2B'] = d.energy;
+                          dataMap[key].duration2B = d.duration;
+                        } else if (d.model === 'Gemma 7B') {
+                          dataMap[key]['Gemma 7B'] = d.energy;
+                          dataMap[key].duration7B = d.duration;
+                        }
+                      });
                       
-                      // Fusionner les deux tableaux en gardant tous les points
-                      const maxLength = Math.max(gemma2B.length, gemma7B.length);
-                      const result = [];
-                      
-                      for (let i = 0; i < maxLength; i++) {
-                        const point = { index: i };
-                        if (gemma2B[i]) point['Gemma 2B'] = gemma2B[i]['Gemma 2B'];
-                        if (gemma7B[i]) point['Gemma 7B'] = gemma7B[i]['Gemma 7B'];
-                        result.push(point);
-                      }
-                      
-                      return result;
+                      return Object.values(dataMap).sort((a, b) => a.responseLength - b.responseLength);
                     })()}
                     margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#c8ddb5" />
                     <XAxis 
-                      dataKey="index" 
+                      dataKey="responseLength" 
                       tick={{ fontSize: 10 }} 
                       stroke="#5a7a4a" 
-                      label={{ value: 'Sample Index', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                      label={{ value: 'Response Length (words)', position: 'insideBottom', offset: -5, fontSize: 10 }}
                     />
                     <YAxis 
                       tick={{ fontSize: 10 }} 
@@ -658,10 +661,15 @@ function App() {
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: '#f5f5f5', border: '1px solid #5a7a4a', borderRadius: '8px', fontSize: '11px' }}
-                      formatter={(value) => value ? [`${value.toFixed(4)} Wh`] : ['-']}
-                      labelFormatter={(value) => `Sample ${value}`}
+                      formatter={(value, name, props) => {
+                        if (!value) return ['-'];
+                        const duration = name === 'Gemma 2B' ? props.payload.duration2B : props.payload.duration7B;
+                        return [`${value.toFixed(4)} Wh${duration ? ` (${duration}s)` : ''}`];
+                      }}
+                      labelFormatter={(value) => `${value} words`}
                     />
-                    <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '5px' }} /> 
+                    <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '5px' }} />
+                    <Line name="Gemma 2B" type="monotone" dataKey="Gemma 2B" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', r: 3 }} connectNulls />
                     <Line name="Gemma 7B" type="monotone" dataKey="Gemma 7B" stroke="#8b5cf6" strokeWidth={2} dot={{ fill: '#8b5cf6', r: 3 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
