@@ -87,7 +87,7 @@ export default function Header() {
                             >
                                 <div className="flex items-center justify-center gap-2">
                                     <span className="text-gray-600 font-medium hidden md:inline">Lucas BARREZ</span>
-                                    <GraduationCap/>
+                                    <GraduationCap />
                                     <span className="font-medium md:hidden">Menu</span>
                                 </div>
                             </button>
@@ -114,6 +114,11 @@ export default function Header() {
                                         <button className="w-full text-left px-4 py-2 text-gray-600 hover:bg-grey transition-colors">
                                             Déconnexion
                                         </button>
+                                    </div>
+                                    <div className="pt-2">
+                                        <Link href="/admin" className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-grey transition-colors">
+                                            Questions en attentes
+                                        </Link>
                                     </div>
                                 </div>
                             )}
