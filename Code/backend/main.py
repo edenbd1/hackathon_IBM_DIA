@@ -561,7 +561,7 @@ def calculate_co2():
     
     return jsonify({
         'co2_kg': round(co2_grams / 1000, 6),  # Pour compatibilité (sera converti en g dans le frontend)
-        'co2_grams': round(co2_grams, 3),  # Valeur en grammes directement
+        'co2_grams': round(co2_grams, 6),  # Valeur en grammes avec 6 décimales (pour précision en mg)
         'energy_kwh': round(predicted_energy_kwh, 6),
         'co2_per_kwh': co2_per_kwh,
         'energy_source': energy_source,

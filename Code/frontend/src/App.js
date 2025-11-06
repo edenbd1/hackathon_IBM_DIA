@@ -79,27 +79,32 @@ function App() {
     }, 500);
   };
 
-  const getComparisons = (co2Grams) => {
+  const getComparisons = (co2Milligrams) => {
+    // Convert mg back to grams for calculations
+    const co2Grams = co2Milligrams / 1000;
+    
     const smartphoneCharge = 8; // g CO2 per charge
     const ledBulbHour = 4; // g CO2 per hour
     const treeYearAbsorption = 21000; // g CO2 per year
     
-    const smartphones = co2Grams / smartphoneCharge;
-    const ledHours = co2Grams / ledBulbHour;
-    const treeDays = (co2Grams / treeYearAbsorption) * 365;
+    // Calculate percentages and convert time units
+    const smartphonePercent = (co2Grams / smartphoneCharge) * 100;
+    const ledSeconds = (co2Grams / ledBulbHour) * 3600; // Convert hours to seconds
+    const treeMinutes = (co2Grams / treeYearAbsorption) * 365 * 24 * 60; // Convert days to minutes
     
     // Format with appropriate precision
     const formatValue = (val) => {
       if (val < 0.001) return val.toExponential(2);
-      if (val < 0.01) return val.toFixed(6);
+      if (val < 0.01) return val.toFixed(4);
       if (val < 1) return val.toFixed(3);
+      if (val < 10) return val.toFixed(2);
       return val.toFixed(1);
     };
     
     return {
-      smartphones: formatValue(smartphones),
-      ledHours: formatValue(ledHours),
-      treeDays: formatValue(treeDays)
+      smartphones: formatValue(smartphonePercent),
+      ledHours: formatValue(ledSeconds),
+      treeDays: formatValue(treeMinutes)
     };
   };
 
@@ -121,16 +126,14 @@ function App() {
         .then(res => res.json())
         .then(data => {
           console.log('CO2 API response:', data);
-          // Use co2_grams directly (already in grams)
-          setCo2Score(data.co2_grams);
-          setDisplayedScore(0);
+          // Convert grams to milligrams for display
+          setCo2Score(data.co2_grams * 1000);
         })
         .catch(err => {
           console.error('Error calculating CO2:', err);
           // Fallback to random if API fails (convert to grams)
           const randomScore = (Math.random() * 2.45 + 0.05) * 1000;
           setCo2Score(randomScore);
-          setDisplayedScore(0);
         });
     } else {
       alert('Please fill in all fields before submitting');
@@ -249,6 +252,9 @@ function App() {
 
   useEffect(() => {
     if (co2Score !== null) {
+      // Reset displayed score to 0 before starting animation
+      setDisplayedScore(0);
+      
       const duration = 2000;
       const steps = 60;
       const increment = co2Score / steps;
@@ -609,11 +615,11 @@ function App() {
             <div className="co2-score-display">
               <div className="co2-value">
                 <span className="co2-number">
-                  {displayedScore < 0.01 
-                    ? displayedScore.toFixed(6) 
+                  {displayedScore < 10 
+                    ? displayedScore.toFixed(3) 
                     : displayedScore.toFixed(2)}
                 </span>
-                <span className="co2-unit">g CO₂</span>
+                <span className="co2-unit">mg CO₂</span>
               </div>
             </div>
             
@@ -621,8 +627,8 @@ function App() {
               <div className="comparison-card">
                 <div className="comparison-icon">📱</div>
                 <div className="comparison-content">
-                  <div className="comparison-value">{comparisons.smartphones}</div>
-                  <div className="comparison-label">Smartphone charges</div>
+                  <div className="comparison-value">{comparisons.smartphones}%</div>
+                  <div className="comparison-label">of a smartphone charge</div>
                   <div className="comparison-source">Source: EXPLORIST.life, DEJI Battery</div>
                 </div>
               </div>
@@ -630,8 +636,8 @@ function App() {
               <div className="comparison-card">
                 <div className="comparison-icon">💡</div>
                 <div className="comparison-content">
-                  <div className="comparison-value">{comparisons.ledHours}</div>
-                  <div className="comparison-label">Hours of LED lighting</div>
+                  <div className="comparison-value">{comparisons.ledHours}s</div>
+                  <div className="comparison-label">of LED lighting</div>
                   <div className="comparison-source">Source: EnergySage, Crompton</div>
                 </div>
               </div>
@@ -639,8 +645,8 @@ function App() {
               <div className="comparison-card">
                 <div className="comparison-icon">🌳</div>
                 <div className="comparison-content">
-                  <div className="comparison-value">{comparisons.treeDays}</div>
-                  <div className="comparison-label">Days of tree absorption</div>
+                  <div className="comparison-value">{comparisons.treeDays}min</div>
+                  <div className="comparison-label">of tree absorption</div>
                   <div className="comparison-source">Source: One Tree Planted, MIT</div>
                 </div>
               </div>
