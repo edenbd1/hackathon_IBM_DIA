@@ -11,6 +11,7 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [co2Score, setCo2Score] = useState(null);
   const [displayedScore, setDisplayedScore] = useState(0);
+  const [energyKwh, setEnergyKwh] = useState(null); // Store energy consumption from API
   const [dropdownOpen, setDropdownOpen] = useState({
     llm: false,
     platform: false,
@@ -71,6 +72,16 @@ function App() {
   const handleEnergySelect = (energy) => {
     setSelectedEnergy(energy);
     setDropdownOpen({ ...dropdownOpen, energy: false });
+    
+    // If we already have energy consumption data, recalculate CO2 with new energy source
+    if (energyKwh !== null) {
+      const energyOption = energyOptions.find(opt => opt.value === energy);
+      if (energyOption) {
+        const newCo2Grams = energyKwh * energyOption.co2PerKwh;
+        const newCo2Mg = newCo2Grams * 1000;
+        setCo2Score(newCo2Mg);
+      }
+    }
   };
 
   const handleMouseLeave = (dropdownType) => {
@@ -123,17 +134,22 @@ function App() {
           prompt: prompt
         })
       })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
         .then(data => {
           console.log('CO2 API response:', data);
+          // Store energy consumption for recalculation when energy source changes
+          setEnergyKwh(data.energy_kwh);
           // Convert grams to milligrams for display
           setCo2Score(data.co2_grams * 1000);
         })
         .catch(err => {
           console.error('Error calculating CO2:', err);
-          // Fallback to random if API fails (convert to grams)
-          const randomScore = (Math.random() * 2.45 + 0.05) * 1000;
-          setCo2Score(randomScore);
+          alert('❌ Error: Unable to connect to the backend server.\n\nPlease make sure the backend is running on http://localhost:5000\n\nTo start the backend, run:\ncd Code/backend\npython main.py');
         });
     } else {
       alert('Please fill in all fields before submitting');
@@ -149,6 +165,7 @@ function App() {
   const handleCloseResults = () => {
     setCo2Score(null);
     setDisplayedScore(0);
+    setEnergyKwh(null);
   };
 
   // Load data from backend on component mount
