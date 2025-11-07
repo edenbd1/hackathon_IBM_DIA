@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { BarChart, Bar, LineChart, Line, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -94,14 +94,32 @@ function App() {
     // Convert mg back to grams for calculations
     const co2Grams = co2Milligrams / 1000;
     
-    const smartphoneCharge = 8; // g CO2 per charge
-    const ledBulbHour = 4; // g CO2 per hour
-    const treeYearAbsorption = 21000; // g CO2 per year
+    const smartphoneChargeWh = 5; // 5 Wh per full charge (0% to 100%)
+    const treeDayAbsorption = 55; // g CO2 per day (20 kg/year ≈ 55 g/day)
     
-    // Calculate percentages and convert time units
-    const smartphonePercent = (co2Grams / smartphoneCharge) * 100;
-    const ledSeconds = (co2Grams / ledBulbHour) * 3600; // Convert hours to seconds
-    const treeMinutes = (co2Grams / treeYearAbsorption) * 365 * 24 * 60; // Convert days to minutes
+    // LED bulb calculation based on energy consumption (kWh from API)
+    const ledBulbWh = 10; // 10 Wh per hour (ampoule LED)
+    
+    // Calculate LED minutes based on energy consumption if available
+    let ledMinutes = 0;
+    let smartphonePercent = 0;
+    
+    if (energyKwh !== null) {
+      // Convert kWh to Wh (multiply by 1000)
+      const energyWh = energyKwh * 1000;
+      
+      // Calculate hours the LED can be powered, then convert to minutes
+      const ledHours = energyWh / ledBulbWh;
+      ledMinutes = ledHours * 60;
+      
+      // Calculate smartphone charges as percentage
+      smartphonePercent = (energyWh / smartphoneChargeWh) * 100;
+    }
+    
+    // Calculate tree comparison: convert days to seconds
+    // co2Grams / 55 g per day = days needed
+    // days * 24 hours * 60 minutes * 60 seconds = seconds
+    const treeSeconds = (co2Grams / treeDayAbsorption) * 24 * 60 * 60;
     
     // Format with appropriate precision
     const formatValue = (val) => {
@@ -114,8 +132,8 @@ function App() {
     
     return {
       smartphones: formatValue(smartphonePercent),
-      ledHours: formatValue(ledSeconds),
-      treeDays: formatValue(treeMinutes)
+      ledHours: formatValue(ledMinutes),
+      treeDays: formatValue(treeSeconds)
     };
   };
 
@@ -282,7 +300,10 @@ function App() {
     }
   }, [co2Score]);
 
-  const comparisons = co2Score !== null ? getComparisons(co2Score) : null;
+  // Recalculate comparisons when co2Score or energyKwh changes
+  const comparisons = useMemo(() => {
+    return co2Score !== null ? getComparisons(co2Score) : null;
+  }, [co2Score, energyKwh]);
 
   return (
     <div className="App">
@@ -699,25 +720,25 @@ function App() {
                 <div className="comparison-content">
                   <div className="comparison-value">{comparisons.smartphones}%</div>
                   <div className="comparison-label">of a smartphone charge</div>
-                  <div className="comparison-source">Source: EXPLORIST.life, DEJI Battery</div>
+                  <div className="comparison-source">Source: Next Business Energy</div>
                 </div>
               </div>
               
               <div className="comparison-card">
                 <div className="comparison-icon">💡</div>
                 <div className="comparison-content">
-                  <div className="comparison-value">{comparisons.ledHours}s</div>
+                  <div className="comparison-value">{comparisons.ledHours} min</div>
                   <div className="comparison-label">of LED lighting</div>
-                  <div className="comparison-source">Source: EnergySage, Crompton</div>
+                  <div className="comparison-source">Source: Solar Technologies</div>
                 </div>
               </div>
               
               <div className="comparison-card">
                 <div className="comparison-icon">🌳</div>
                 <div className="comparison-content">
-                  <div className="comparison-value">{comparisons.treeDays}min</div>
+                  <div className="comparison-value">{comparisons.treeDays}s</div>
                   <div className="comparison-label">of tree absorption</div>
-                  <div className="comparison-source">Source: One Tree Planted, MIT</div>
+                  <div className="comparison-source">Source: ForTomorrow, Viessmann</div>
                 </div>
               </div>
             </div>
@@ -735,12 +756,36 @@ function App() {
             <span className="falling-leaf">🍃</span>
             <span className="falling-leaf">🍂</span>
             <span className="falling-leaf">🍃</span>
+            <span className="falling-leaf" style={{ left: '15%', animationDelay: '1s', animationDuration: '4s' }}>🍂</span>
+            <span className="falling-leaf" style={{ left: '25%', animationDelay: '2s', animationDuration: '5s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '35%', animationDelay: '0.5s', animationDuration: '6s' }}>🍂</span>
+            <span className="falling-leaf" style={{ left: '45%', animationDelay: '1.5s', animationDuration: '5.5s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '55%', animationDelay: '0.8s', animationDuration: '4.5s' }}>🍂</span>
+            <span className="falling-leaf" style={{ left: '65%', animationDelay: '2.5s', animationDuration: '5s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '75%', animationDelay: '1.2s', animationDuration: '6s' }}>🍂</span>
+            <span className="falling-leaf" style={{ left: '85%', animationDelay: '3s', animationDuration: '4.8s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '20%', animationDelay: '3.5s', animationDuration: '5.2s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '60%', animationDelay: '2.2s', animationDuration: '4.3s' }}>🍂</span>
+            <span className="falling-leaf" style={{ left: '40%', animationDelay: '1.8s', animationDuration: '5.7s' }}>🍃</span>
+            <span className="falling-leaf" style={{ left: '70%', animationDelay: '0.3s', animationDuration: '4.9s' }}>🍂</span>
           </div>
-          <div className="plant-right">🌱</div>
-          <div className="flowers">
-            <span className="flower">🌸</span>
-            <span className="flower">🌼</span>
-          </div>
+          {/* Forêt dense - 16 arbres répartis sur toute la largeur */}
+          <div style={{ position: 'absolute', bottom: '5px', left: '5%', fontSize: '33px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '12%', fontSize: '30px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '18%', fontSize: '35px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '24%', fontSize: '32px' }}>🌴</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '30%', fontSize: '34px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '36%', fontSize: '31px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '42%', fontSize: '33px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '48%', fontSize: '30px' }}>🌴</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '54%', fontSize: '35px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '60%', fontSize: '32px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '66%', fontSize: '34px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '72%', fontSize: '31px' }}>🌴</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '78%', fontSize: '33px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '84%', fontSize: '32px' }}>🌲</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '90%', fontSize: '30px' }}>🌳</div>
+          <div style={{ position: 'absolute', bottom: '5px', left: '95%', fontSize: '34px' }}>🌲</div>
         </div>
       </div>
     </div>

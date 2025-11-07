@@ -701,45 +701,52 @@
 }
 
 .leaves-falling {
-  position: absolute;
-  left: 50%;
-  top: -150px;
-  width: 200px;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1000;
 }
 
 .falling-leaf {
   position: absolute;
   font-size: 1.8rem;
-  animation: fall 6s linear infinite;
+  animation: fall 12s linear infinite;
+  top: -50px;
 }
 
 .falling-leaf:nth-child(1) {
-  left: 0;
+  left: 10%;
   animation-delay: 0s;
 }
 
 .falling-leaf:nth-child(2) {
-  left: 50px;
+  left: 30%;
   animation-delay: 2s;
 }
 
 .falling-leaf:nth-child(3) {
-  left: 100px;
+  left: 50%;
   animation-delay: 4s;
 }
 
 .falling-leaf:nth-child(4) {
-  left: 150px;
+  left: 70%;
   animation-delay: 1s;
 }
 
 @keyframes fall {
   0% {
     transform: translateY(0) rotate(0deg);
-    opacity: 0.9;
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.3;
   }
   100% {
-    transform: translateY(250px) rotate(360deg);
+    transform: translateY(100vh) rotate(360deg);
     opacity: 0;
   }
 }
